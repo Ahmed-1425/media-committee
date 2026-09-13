@@ -55,8 +55,20 @@ export default function NewRequestPage() {
   const [selectedMediaType, setSelectedMediaType] = useState<string>('');
   const [selectedPriority, setSelectedPriority] = useState<RequestPriority>('normal');
 
-  // Date & Time Interactive State (100% Gregorian & AM/PM Bug-Free)
-  const todayStr = new Date().toISOString().split('T')[0];
+  // Date & Time Interactive State (100% Gregorian & Riyadh Timezone UTC+3)
+  function getRiyadhDateOffset(offsetDays: number = 0): string {
+    const d = new Date();
+    // Convert to Riyadh time (UTC+3)
+    const utc = d.getTime() + (d.getTimezoneOffset() * 60000);
+    const riyadhTime = new Date(utc + (3600000 * 3));
+    riyadhTime.setDate(riyadhTime.getDate() + offsetDays);
+    const y = riyadhTime.getFullYear();
+    const m = String(riyadhTime.getMonth() + 1).padStart(2, '0');
+    const day = String(riyadhTime.getDate()).padStart(2, '0');
+    return `${y}-${m}-${day}`;
+  }
+
+  const todayStr = getRiyadhDateOffset(0);
   const [selectedDate, setSelectedDate] = useState<string>(todayStr);
   const [selectedHour, setSelectedHour] = useState<string>('08');
   const [selectedMinute, setSelectedMinute] = useState<string>('00');
@@ -95,9 +107,7 @@ export default function NewRequestPage() {
   }
 
   function setDateOffset(offsetDays: number) {
-    const d = new Date();
-    d.setDate(d.getDate() + offsetDays);
-    setSelectedDate(d.toISOString().split('T')[0]);
+    setSelectedDate(getRiyadhDateOffset(offsetDays));
   }
 
   function get24HourFormattedTime(): string {
@@ -131,7 +141,8 @@ export default function NewRequestPage() {
 
     if (selectedDate) {
       const time24 = get24HourFormattedTime();
-      formData.set('requested_publish_at', `${selectedDate}T${time24}:00`);
+      // Explicitly attach Riyadh timezone offset (+03:00) so server preserves the exact selected hour
+      formData.set('requested_publish_at', `${selectedDate}T${time24}:00+03:00`);
     }
 
     return formData;
@@ -533,6 +544,8 @@ export default function NewRequestPage() {
                   { label: '04:00 م', h: '04', m: '00', p: 'PM' as const },
                   { label: '08:00 م', h: '08', m: '00', p: 'PM' as const },
                   { label: '10:00 م', h: '10', m: '00', p: 'PM' as const },
+                  { label: '11:00 م 🌟', h: '11', m: '00', p: 'PM' as const },
+                  { label: '12:00 ص (منتصف الليل)', h: '12', m: '00', p: 'AM' as const },
                 ].map((preset) => {
                   const isSelected = selectedHour === preset.h && selectedMinute === preset.m && selectedPeriod === preset.p;
                   return (
@@ -580,7 +593,7 @@ export default function NewRequestPage() {
                     onChange={(e) => setSelectedMinute(e.target.value)}
                     className="w-full px-2 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-xs font-black text-center text-slate-900 dark:text-white cursor-pointer focus:ring-2 focus:ring-amber-500"
                   >
-                    {['00', '15', '30', '45'].map((m) => (
+                    {['00', '05', '10', '15', '20', '25', '30', '35', '40', '45', '50', '55'].map((m) => (
                       <option key={m} value={m}>{m}</option>
                     ))}
                   </select>
@@ -617,9 +630,14 @@ export default function NewRequestPage() {
               </div>
 
               {/* Formatted Time Preview */}
-              <div className="p-2.5 rounded-xl bg-amber-50/70 dark:bg-amber-950/40 border border-amber-100 dark:border-amber-900 text-xs text-amber-900 dark:text-amber-200 font-bold flex items-center gap-2">
-                <Clock3 className="w-3.5 h-3.5 text-amber-600 shrink-0" />
-                <span>الوقت المحدد للنشر: {selectedHour}:{selectedMinute} {selectedPeriod === 'AM' ? 'صباحاً (AM)' : 'مساءً (PM)'}</span>
+              <div className="p-3 rounded-xl bg-amber-50/80 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-900 text-xs text-amber-950 dark:text-amber-200 font-bold space-y-1">
+                <div className="flex items-center gap-2">
+                  <Clock3 className="w-3.5 h-3.5 text-amber-600 shrink-0" />
+                  <span>الوقت المحدد للنشر: {selectedHour}:{selectedMinute} {selectedPeriod === 'AM' ? 'صباحاً (AM)' : 'مساءً (PM)'}</span>
+                </div>
+                <p className="text-[11px] text-amber-800/80 dark:text-amber-300/80 pr-5.5">
+                  ✓ توقيت مكة المكرمة/الرياض (UTC+3) — كافة أوقات المساء والليل متاحة ومعتمدة دون استبعاد.
+                </p>
               </div>
             </div>
 

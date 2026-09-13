@@ -14,6 +14,7 @@ interface ResubmitRequestFormProps {
     media_type_id: string;
     priority: string;
     current_version: number;
+    requested_publish_at?: string | null;
   };
 }
 
@@ -108,6 +109,7 @@ export function ResubmitRequestForm({ request }: ResubmitRequestFormProps) {
         <input type="hidden" name="platform_id" value={request.platform_id} />
         <input type="hidden" name="media_type_id" value={request.media_type_id} />
         <input type="hidden" name="priority" value={request.priority} />
+        <input type="hidden" name="requested_publish_at" value={request.requested_publish_at || ''} />
 
         <div className="space-y-1.5">
           <label className="font-semibold text-slate-700 dark:text-slate-300">رابط قوقل درايف المعدل</label>

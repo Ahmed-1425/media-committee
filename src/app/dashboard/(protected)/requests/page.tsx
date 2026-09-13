@@ -196,11 +196,19 @@ export default async function AdminRequestsPage({ searchParams }: PageProps) {
                   </div>
                 </div>
 
-                <div className="flex items-center justify-between pt-3 border-t border-slate-100 dark:border-slate-800 text-xs">
-                  <SlaBadge state={(req.sla as any)?.state} />
-                  <span className="text-[11px] text-slate-400">
-                    {formatArabicShortDate(req.submitted_at || req.created_at)}
-                  </span>
+                <div className="flex flex-col gap-2 pt-3 border-t border-slate-100 dark:border-slate-800 text-xs">
+                  {req.requested_publish_at && (
+                    <div className="flex items-center justify-between text-amber-900 dark:text-amber-300 font-bold bg-amber-50/80 dark:bg-amber-950/40 px-3 py-1.5 rounded-xl border border-amber-200 dark:border-amber-900/60">
+                      <span>⏰ وقت النشر المقترح:</span>
+                      <span>{formatArabicDate(req.requested_publish_at)}</span>
+                    </div>
+                  )}
+                  <div className="flex items-center justify-between">
+                    <SlaBadge state={(req.sla as any)?.state} />
+                    <span className="text-[11px] text-slate-400">
+                      تقديم: {formatArabicShortDate(req.submitted_at || req.created_at)}
+                    </span>
+                  </div>
                 </div>
 
                 <Link
@@ -225,7 +233,7 @@ export default async function AdminRequestsPage({ searchParams }: PageProps) {
                   <th className="p-4">المنصة ونوع المحتوى</th>
                   <th className="p-4">الأولوية</th>
                   <th className="p-4">الحالة</th>
-                  <th className="p-4">حالة SLA</th>
+                  <th className="p-4">موعد النشر المقترح</th>
                   <th className="p-4">تاريخ التقديم</th>
                   <th className="p-4">مساحة المراجعة</th>
                 </tr>
@@ -253,10 +261,10 @@ export default async function AdminRequestsPage({ searchParams }: PageProps) {
                     <td className="p-4">
                       <StatusBadge status={req.status as RequestStatus} />
                     </td>
-                    <td className="p-4">
-                      <SlaBadge state={(req.sla as any)?.state} />
+                    <td className="p-4 font-bold text-amber-800 dark:text-amber-300 whitespace-nowrap">
+                      {req.requested_publish_at ? formatArabicDate(req.requested_publish_at) : '-'}
                     </td>
-                    <td className="p-4 text-slate-500 font-bold">
+                    <td className="p-4 text-slate-500 font-bold whitespace-nowrap">
                       {formatArabicShortDate(req.submitted_at || req.created_at)}
                     </td>
                     <td className="p-4">

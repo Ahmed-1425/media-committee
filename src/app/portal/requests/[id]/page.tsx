@@ -142,7 +142,7 @@ export default async function PortalRequestDetailPage({ params, searchParams }: 
           {/* Request Card Content */}
           <div className="p-6 rounded-3xl bg-white dark:bg-[#111C35] border border-slate-200 dark:border-slate-800 shadow-sm space-y-6">
             
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 pb-6 border-b border-slate-100 dark:border-slate-800 text-xs">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pb-6 border-b border-slate-100 dark:border-slate-800 text-xs">
               <div>
                 <span className="text-slate-400 block mb-1">المنصة:</span>
                 <span className="font-bold text-slate-800 dark:text-slate-200">
@@ -159,6 +159,12 @@ export default async function PortalRequestDetailPage({ params, searchParams }: 
                 <span className="text-slate-400 block mb-1">الأولوية:</span>
                 <span className={`font-bold ${request.priority === 'urgent' ? 'text-rose-600' : 'text-slate-800 dark:text-slate-200'}`}>
                   {request.priority === 'urgent' ? 'عاجل' : 'عادي'}
+                </span>
+              </div>
+              <div>
+                <span className="text-slate-400 block mb-1">موعد النشر المقترح:</span>
+                <span className="font-bold text-[#06266F] dark:text-blue-300">
+                  {formatArabicDate(request.requested_publish_at)}
                 </span>
               </div>
             </div>

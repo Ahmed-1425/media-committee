@@ -1,7 +1,7 @@
 'use server';
 
 import { createClient, createAdminClient } from '@/lib/supabase/server';
-import { isValidGoogleDriveUrl } from '@/lib/utils';
+import { isValidGoogleDriveUrl, parseRiyadhDateToIso } from '@/lib/utils';
 import { RequestStatus, RequestPriority } from '@/lib/types';
 import { revalidatePath } from 'next/cache';
 
@@ -116,7 +116,7 @@ export async function createOrUpdateDraft(formData: FormData, requestId?: string
     priority,
     drive_link,
     notes: notes || null,
-    requested_publish_at: requested_publish_at ? new Date(requested_publish_at).toISOString() : null,
+    requested_publish_at: parseRiyadhDateToIso(requested_publish_at),
     status: 'draft' as RequestStatus,
   };
 
@@ -196,7 +196,7 @@ export async function submitRequest(formData: FormData, requestId?: string) {
         priority,
         drive_link,
         notes: notes || null,
-        requested_publish_at: requested_publish_at ? new Date(requested_publish_at).toISOString() : null,
+        requested_publish_at: parseRiyadhDateToIso(requested_publish_at),
         status: 'submitted',
         submitted_at: nowIso,
         submitted_by: user.id,
@@ -218,7 +218,7 @@ export async function submitRequest(formData: FormData, requestId?: string) {
         priority,
         drive_link,
         notes: notes || null,
-        requested_publish_at: requested_publish_at ? new Date(requested_publish_at).toISOString() : null,
+        requested_publish_at: parseRiyadhDateToIso(requested_publish_at),
         status: 'submitted',
         submitted_at: nowIso,
         submitted_by: user.id,
@@ -242,7 +242,7 @@ export async function submitRequest(formData: FormData, requestId?: string) {
     priority,
     drive_link,
     notes: notes || null,
-    requested_publish_at: requested_publish_at ? new Date(requested_publish_at).toISOString() : null,
+    requested_publish_at: parseRiyadhDateToIso(requested_publish_at),
     status: 'submitted',
     created_by: user.id,
   });
@@ -363,7 +363,7 @@ export async function resubmitRequest(formData: FormData, requestId: string) {
       priority,
       drive_link,
       notes: notes || null,
-      requested_publish_at: requested_publish_at ? new Date(requested_publish_at).toISOString() : null,
+      requested_publish_at: parseRiyadhDateToIso(requested_publish_at),
       status: 'submitted',
       current_version: newVersionNumber,
       submitted_at: nowIso,
@@ -384,7 +384,7 @@ export async function resubmitRequest(formData: FormData, requestId: string) {
     priority,
     drive_link,
     notes: notes || null,
-    requested_publish_at: requested_publish_at ? new Date(requested_publish_at).toISOString() : null,
+    requested_publish_at: parseRiyadhDateToIso(requested_publish_at),
     status: 'submitted',
     resubmission_reason: resubmission_reason || null,
     created_by: user.id,
