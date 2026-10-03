@@ -10,6 +10,7 @@
     "test:rls": "ts-node scripts/test-rls-security.ts"
   },
   "dependencies": {
+    "@opentelemetry/api": "^1.9.1",
     "@supabase/ssr": "^0.5.2",
     "@supabase/supabase-js": "^2.48.1",
     "clsx": "^2.1.1",
@@ -20,6 +21,7 @@
     "tailwind-merge": "^3.0.1"
   },
   "devDependencies": {
+    "@netlify/plugin-nextjs": "^5.16.1",
     "@types/node": "^22.13.4",
     "@types/react": "^19.0.10",
     "@types/react-dom": "^19.0.4",

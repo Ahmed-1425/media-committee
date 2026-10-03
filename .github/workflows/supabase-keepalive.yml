@@ -1,0 +1,39 @@
+name: Supabase Keep-Alive Ping
+
+on:
+  schedule:
+    # Run every 6 hours (at minute 0 past every 6th hour)
+    - cron: '0 */6 * * *'
+  workflow_dispatch: # Allows manual trigger from GitHub Actions tab
+
+jobs:
+  keepalive:
+    name: Ping Supabase Database
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping Supabase REST API Directly
+        run: |
+          echo "Sending keep-alive ping directly to Supabase REST API..."
+          RESPONSE=$(curl -s -w "\nHTTP_STATUS:%{http_code}" \
+            -H "apikey: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlxYmZpZm90bGNjZW1nZ2dlaXhlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODU1MDc4OTEsImV4cCI6MjEwMTA4Mzg5MX0.VJqgtR3Qsecd1dTVXltdGxfEz0koagjVsqRkzAHkuVU' }}" \
+            -H "Authorization: Bearer ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlxYmZpZm90bGNjZW1nZ2dlaXhlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODU1MDc4OTEsImV4cCI6MjEwMTA4Mzg5MX0.VJqgtR3Qsecd1dTVXltdGxfEz0koagjVsqRkzAHkuVU' }}" \
+            "https://iqbfifotlccemgggeixe.supabase.co/rest/v1/profiles?select=id&limit=1")
+          
+          HTTP_STATUS=$(echo "$RESPONSE" | grep "HTTP_STATUS" | cut -d: -f2)
+          BODY=$(echo "$RESPONSE" | grep -v "HTTP_STATUS")
+          
+          echo "Supabase Response Status: $HTTP_STATUS"
+          echo "Supabase Response Body: $BODY"
+          
+          if [ "$HTTP_STATUS" -ge 200 ] && [ "$HTTP_STATUS" -lt 300 ]; then
+            echo "✅ Direct Supabase query succeeded. Database is active!"
+          else
+            echo "⚠️ Unexpected status from Supabase: $HTTP_STATUS"
+          fi
+
+      - name: Ping Web Application Keep-Alive Endpoint
+        run: |
+          echo "Pinging https://media.sppksu.com/api/keepalive..."
+          APP_RESPONSE=$(curl -s -w "\nHTTP_STATUS:%{http_code}" "https://media.sppksu.com/api/keepalive" || true)
+          APP_STATUS=$(echo "$APP_RESPONSE" | grep "HTTP_STATUS" | cut -d: -f2 || true)
+          echo "App Response Status: $APP_STATUS"
