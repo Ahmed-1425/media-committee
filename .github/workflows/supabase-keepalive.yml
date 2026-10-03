@@ -33,7 +33,6 @@ jobs:
 
       - name: Ping Web Application Keep-Alive Endpoint
         run: |
-          echo "Pinging https://media.sppksu.com/api/keepalive..."
-          APP_RESPONSE=$(curl -s -w "\nHTTP_STATUS:%{http_code}" "https://media.sppksu.com/api/keepalive" || true)
-          APP_STATUS=$(echo "$APP_RESPONSE" | grep "HTTP_STATUS" | cut -d: -f2 || true)
-          echo "App Response Status: $APP_STATUS"
+          echo "Pinging keep-alive endpoints..."
+          curl -s -f "https://mediasppksu.netlify.app/api/keepalive" || true
+          curl -s -f "https://media.sppksu.com/api/keepalive" || true

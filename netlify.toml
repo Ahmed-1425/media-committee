@@ -4,3 +4,15 @@
 
 [[plugins]]
   package = "@netlify/plugin-nextjs"
+
+[[redirects]]
+  from = "https://media.sppksu.com/*"
+  to = "https://mediasppksu.netlify.app/:splat"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "http://media.sppksu.com/*"
+  to = "https://mediasppksu.netlify.app/:splat"
+  status = 301
+  force = true

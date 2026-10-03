@@ -2,6 +2,13 @@ import { createServerClient } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
 
 export async function middleware(request: NextRequest) {
+  // 1. Redirect legacy domain media.sppksu.com to mediasppksu.netlify.app
+  const host = request.headers.get('host') || request.headers.get('x-forwarded-host') || '';
+  if (host.includes('media.sppksu.com')) {
+    const targetUrl = new URL(request.nextUrl.pathname + request.nextUrl.search, 'https://mediasppksu.netlify.app');
+    return NextResponse.redirect(targetUrl, 301);
+  }
+
   let supabaseResponse = NextResponse.next({
     request,
   });
